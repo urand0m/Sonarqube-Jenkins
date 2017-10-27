@@ -1,5 +1,0 @@
-projectKey=org.cysecurity:JavaVulnerableLab
-serverUrl=http://localhost:9000
-dashboardUrl=http://localhost:9000/dashboard/index/org.cysecurity:JavaVulnerableLab
-ceTaskId=AV9ca_EL7yMulIvTXbhM
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AV9ca_EL7yMulIvTXbhM
