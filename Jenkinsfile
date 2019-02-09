@@ -69,21 +69,21 @@ pipeline {
             }
         }
 
-        stage('Wait Deployment To Complete'){
-            steps{
-                script {
-                def response = sh(script: 'curl http://dockerd:8080/JavaVulnerableLab/', returnStdout: true)
-
-                String curltest = "200"
-
-                if (response == curltest) {
-                    echo ok
-                }else{
-                    assert condition : "Seems Deployment went wrong..."
-                    }
-                }
-            }
-        }
+        //stage('Wait Deployment To Complete'){
+        //    steps{
+        //        script {
+        //        def response = sh(script: 'curl http://dockerd:8080/JavaVulnerableLab/', returnStdout: true)
+        //
+        //        String curltest = "200"
+        //
+        //        if (response == curltest) {
+        //            echo ok
+        //        }else{
+        //            assert condition : "Seems Deployment went wrong..."
+        //            }
+        //        }
+        //    }
+        //}
 
         stage('Dynamic Analysis - Arachni'){
             steps{
