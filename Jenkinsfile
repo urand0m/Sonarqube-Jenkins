@@ -68,8 +68,10 @@ pipeline {
 
             }
         }
+
         stage('Wait Deployment To Complete'){
             steps{
+                script {
                 def response = sh(script: 'curl http://dockerd:8080/JavaVulnerableLab/', returnStdout: true)
 
                 String curltest = "200"
@@ -78,9 +80,11 @@ pipeline {
                     echo ok
                 }else{
                     assert condition : "Seems Deployment went wrong..."
+                    }
                 }
             }
         }
+
         stage('Dynamic Analysis - Arachni'){
             steps{
                 timeout(time: 1, unit: 'HOURS')
