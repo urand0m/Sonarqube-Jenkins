@@ -97,11 +97,11 @@ pipeline {
                     sh '/opt/arachni/bin/arachni_reporter scan_report_$today.afr --reporter=html:outfile=arachni_scan_report_$today.zip ; '
 
                 }
-                script {
+                //script {
 
-                    ARACHNI=sh label: 'arachni', returnStdout: true, script: 'ls scan_report_* | awk -F _ \'{print "arachni_scan_report_"$3}\''
-                }
-                archiveArtifacts artifacts: "${ARACHNI}",onlyIfSuccessful: true
+                //    ARACHNI=sh label: 'arachni', returnStdout: true, script: 'ls scan_report_* | awk -F _ \'{print "arachni_scan_report_"$3""}\''
+                //}
+                archiveArtifacts artifacts: 'arachni_scan_*.zip',onlyIfSuccessful: true
             }
         }
 
