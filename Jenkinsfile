@@ -61,7 +61,9 @@ pipeline {
         }
         stage('Deploy to Tomcat'){
             steps {
+                sh 'pwd'
                 sh 'id'
+                sh 'ls'
                 sh 'scp target/JavaVulnerableLab.war urandom@dockerd:/home/urandom/test/tomcat/'
                 echo 'DONE'
 
