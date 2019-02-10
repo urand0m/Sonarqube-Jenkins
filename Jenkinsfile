@@ -27,11 +27,11 @@ pipeline {
         stage('SpotBug Static Code Analysis') {
             steps {
 
-                sh "mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs com.github.spotbugs:spotbugs-maven-plugin:3.1.7:spotbugs"
-                recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-                recordIssues enabledForFailure: true, tool: checkStyle()
+                sh "mvn -batch-mode -V -U -e checkstyle:checkstyle findbugs:findbugs com.github.spotbugs:spotbugs-maven-plugin:3.1.7:spotbugs"
+                //recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+                //recordIssues enabledForFailure: true, tool: checkStyle()
                 recordIssues enabledForFailure: true, tool: spotBugs()
-                recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+                //recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
                 //recordIssues enabledForFailure: true, tool: pmd(pattern: '**/target/pmd.xml')
 
             }
@@ -45,11 +45,12 @@ pipeline {
                 //War file extracted at: $(pwd)/WarExtract-SCA/jspwiki-war/target/JSPWiki.war
                 dependencyCheckAnalyzer datadir: '', hintsFile: '', includeCsvReports: true, includeHtmlReports: true, includeJsonReports: true, includeVulnReports: true, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
                 dependencyCheckPublisher canRunOnFailed: true, defaultEncoding: '', healthy: '', pattern: '', shouldDetectModules: true, unHealthy: ''
+                dependencyTrackPublisher artifact: 'dependency-check-report.xml', artifactType: 'scanResult', projectId: '639cccde-564f-499b-ae14-45473d72eb30', synchronous: false
                 archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', onlyIfSuccessful: true
                 //Add command to extract report from SCA scan
                 stash includes: 'dependency-check-report.html,dependency-check-report.xml', name: 'DependencyCheckReport'
 
-                dependencyTrackPublisher artifact: 'dependency-check-report.xml', artifactType: 'scanResult', projectId: '639cccde-564f-499b-ae14-45473d72eb30', synchronous: false
+
             }
         }
         stage('Snyk.io Dependency Check without Jenkins Plugin') {
