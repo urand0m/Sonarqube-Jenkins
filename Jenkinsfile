@@ -45,9 +45,10 @@ pipeline {
                 //War file extracted at: $(pwd)/WarExtract-SCA/jspwiki-war/target/JSPWiki.war
                 dependencyCheckAnalyzer datadir: '', hintsFile: '', includeCsvReports: true, includeHtmlReports: true, includeJsonReports: true, includeVulnReports: true, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
                 dependencyCheckPublisher canRunOnFailed: true, defaultEncoding: '', healthy: '', pattern: '', shouldDetectModules: true, unHealthy: ''
-                archiveArtifacts artifacts: 'dependency-check-report.html', onlyIfSuccessful: true
+                archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', onlyIfSuccessful: true
                 //Add command to extract report from SCA scan
                 stash includes: 'dependency-check-report.html', name: 'DependencyCheckReport'
+                dependencyTrackPublisher artifact: 'dependency-check-report.html', artifactType: 'scanResult', synchronous: true
             }
         }
         stage('Snyk.io Dependency Check without Jenkins Plugin') {
@@ -111,6 +112,7 @@ pipeline {
                 node('Appscan') {
                     step([$class: 'AppScanStandardBuilder', additionalCommands: '/report_file C:\\Jenkins\\workspace\\JavaVulnerable\\javavuln.html /report_type Html', authScanPw: '', authScanRadio: true, authScanUser: '', includeURLS: '', installation: 'Appscan', pathRecordedLoginSequence: '', policyFile: 'C:\\Program Files (x86)\\IBM\\AppScan Standard\\Policies\\Application-Only.policy', reportName: 'javavuln.html', startingURL: 'http://dockerd:8080/JavaVulnerableLab/', verbose: true])
                     archiveArtifacts artifacts: 'javavuln.html', onlyIfSuccessful: true
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'javavuln.html', reportName: 'Appscan Report', reportTitles: 'AppscanReport'])
                 }
             }
         }
