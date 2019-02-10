@@ -47,8 +47,9 @@ pipeline {
                 dependencyCheckPublisher canRunOnFailed: true, defaultEncoding: '', healthy: '', pattern: '', shouldDetectModules: true, unHealthy: ''
                 archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', onlyIfSuccessful: true
                 //Add command to extract report from SCA scan
-                stash includes: 'dependency-check-report.html', name: 'DependencyCheckReport'
-                dependencyTrackPublisher artifact: 'dependency-check-report.html', artifactType: 'scanResult', synchronous: true
+                stash includes: 'dependency-check-report.html,dependency-check-report.xml', name: 'DependencyCheckReport'
+
+                dependencyTrackPublisher artifact: 'dependency-check-report.html', artifactType: 'scanResult', synchronous: true, projectName: 'JavaVulnerableApp'
             }
         }
         stage('Snyk.io Dependency Check without Jenkins Plugin') {
@@ -57,6 +58,7 @@ pipeline {
                     try {
                         sh 'snyk test --json | snyk-to-html -o snyk_report.html || true'
                         archiveArtifacts artifacts: 'snyk_report.html', onlyIfSuccessful: true
+                        stash includes: 'snyk_report.html', name: 'DependencyCheckReport'
                         publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'snyk_report.html', reportName: 'Snyk Report', reportTitles: 'Snyk Report'])
                     }
                     catch (err) {
@@ -104,6 +106,7 @@ pipeline {
                 //    ARACHNI=sh label: 'arachni', returnStdout: true, script: 'ls scan_report_* | awk -F _ \'{print "arachni_scan_report_"$3""}\''
                 //}
                 archiveArtifacts artifacts: 'arachni_scan_*.zip', onlyIfSuccessful: true
+                stash includes: 'arachni_report_.zip',name: 'AppscanReport'
             }
         }
 
@@ -111,7 +114,8 @@ pipeline {
             steps {
                 node('Appscan') {
                     step([$class: 'AppScanStandardBuilder', additionalCommands: '/report_file C:\\Jenkins\\workspace\\JavaVulnerable\\javavuln.html /report_type Html', authScanPw: '', authScanRadio: true, authScanUser: '', includeURLS: '', installation: 'Appscan', pathRecordedLoginSequence: '', policyFile: 'C:\\Program Files (x86)\\IBM\\AppScan Standard\\Policies\\Application-Only.policy', reportName: 'javavuln.html', startingURL: 'http://dockerd:8080/JavaVulnerableLab/', verbose: true])
-                    archiveArtifacts artifacts: 'javavuln.html', onlyIfSuccessful: true
+                    archiveArtifacts artifacts: 'javavuln.html', onlyIfSuccessful: false
+                    stash includes: 'javavuln.html', name: 'AppscanReport'
                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'javavuln.html', reportName: 'Appscan Report', reportTitles: 'AppscanReport'])
                 }
             }
