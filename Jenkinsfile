@@ -49,7 +49,7 @@ pipeline {
                 //Add command to extract report from SCA scan
                 stash includes: 'dependency-check-report.html,dependency-check-report.xml', name: 'DependencyCheckReport'
 
-                dependencyTrackPublisher artifact: 'dependency-check-report.xml', artifactType: 'scanResult', synchronous: true, projectName: 'JavaVulnerableApp'
+                dependencyTrackPublisher artifact: 'dependency-check-report.xml', artifactType: 'bom', projectId: '639cccde-564f-499b-ae14-45473d72eb30', synchronous: false
             }
         }
         stage('Snyk.io Dependency Check without Jenkins Plugin') {
