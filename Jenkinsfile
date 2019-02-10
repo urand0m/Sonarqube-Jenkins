@@ -56,6 +56,7 @@ pipeline {
                     try {
                         sh 'snyk test --json | snyk-to-html -o snyk_report.html || true'
                         archiveArtifacts artifacts: 'snyk_report.html', onlyIfSuccessful: true
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'snyk_report.html', reportName: 'Snyk Report', reportTitles: 'Snyk Report'])
                     }
                     catch (err) {
                         echo err
@@ -109,7 +110,7 @@ pipeline {
             steps {
                 node('Appscan') {
                     step([$class: 'AppScanStandardBuilder', additionalCommands: '/report_file C:\\Jenkins\\workspace\\JavaVulnerable\\ /report_type Html', authScanPw: '', authScanRadio: true, authScanUser: '', includeURLS: '', installation: 'Appscan', pathRecordedLoginSequence: '', policyFile: 'C:\\Program Files (x86)\\IBM\\AppScan Standard\\Policies\\Application-Only.policy', reportName: 'javavuln.html', startingURL: 'http://dockerd:8080/JavaVulnerableLab/', verbose: true])
-                    archiveArtifacts artifacts: 'javavuln.html', onlyIfSuccessful: true
+                    archiveArtifacts artifacts: 'C:\\Jenkins\\workspace\\JavaVulnerable\\javavuln.html', onlyIfSuccessful: true
                 }
             }
         }
