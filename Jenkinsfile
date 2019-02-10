@@ -105,7 +105,7 @@ pipeline {
 
                 //    ARACHNI=sh label: 'arachni', returnStdout: true, script: 'ls scan_report_* | awk -F _ \'{print "arachni_scan_report_"$3""}\''
                 //}
-                archiveArtifacts artifacts: 'arachni_scan_*.zip', onlyIfSuccessful: true
+                archiveArtifacts artifacts: 'arachni_scan_*.zip', onlyIfSuccessful: false
                 stash includes: 'arachni_report_.zip',name: 'AppscanReport'
             }
         }
