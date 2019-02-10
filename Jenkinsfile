@@ -105,8 +105,9 @@ pipeline {
 
                 //    ARACHNI=sh label: 'arachni', returnStdout: true, script: 'ls scan_report_* | awk -F _ \'{print "arachni_scan_report_"$3""}\''
                 //}
-                archiveArtifacts artifacts: 'arachni_scan_*.zip', onlyIfSuccessful: false
                 stash includes: 'arachni_report_.zip',name: 'AppscanReport'
+                archiveArtifacts artifacts: 'arachni_scan_*.zip', onlyIfSuccessful: false
+
             }
         }
 
@@ -114,8 +115,8 @@ pipeline {
             steps {
                 node('Appscan') {
                     step([$class: 'AppScanStandardBuilder', additionalCommands: '/report_file C:\\Jenkins\\workspace\\JavaVulnerable\\javavuln.html /report_type Html', authScanPw: '', authScanRadio: true, authScanUser: '', includeURLS: '', installation: 'Appscan', pathRecordedLoginSequence: '', policyFile: 'C:\\Program Files (x86)\\IBM\\AppScan Standard\\Policies\\Application-Only.policy', reportName: 'javavuln.html', startingURL: 'http://dockerd:8080/JavaVulnerableLab/', verbose: true])
-                    archiveArtifacts artifacts: 'javavuln.html', onlyIfSuccessful: false
                     stash includes: 'javavuln.html', name: 'AppscanReport'
+                    archiveArtifacts artifacts: 'javavuln.html', onlyIfSuccessful: false
                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'javavuln.html', reportName: 'Appscan Report', reportTitles: 'AppscanReport'])
                 }
             }
