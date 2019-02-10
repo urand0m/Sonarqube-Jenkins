@@ -66,7 +66,7 @@ pipeline {
         stage('Deploy to Tomcat') {
             steps {
 
-                sh 'scp target/JavaVulnerableLab.war urandom@dockerd:/home/urandom/test/tomcat/'
+                sh 'scp target/JavaVulnerableLab.war urandom@dockerd:/home/urandom/tomcat/'
                 echo '[*] Waiting for Tomcat to explode package'
 
 
@@ -108,7 +108,7 @@ pipeline {
         stage('Dynamic Analysis Security Testing- AppScan') {
             steps {
                 node('Appscan') {
-                    step([$class: 'AppScanStandardBuilder', additionalCommands: '/report_file C:\\Jenkins\\workspace\\\\JavaVulnerable\\ /report_type Html', authScanPw: '', authScanRadio: true, authScanUser: '', includeURLS: '', installation: 'Appscan', pathRecordedLoginSequence: '', policyFile: 'C:\\Program Files (x86)\\IBM\\AppScan Standard\\Policies\\Application-Only.policy', reportName: 'javavuln.html', startingURL: 'http://dockerd:8080/JavaVulnerableLab/', verbose: true])
+                    step([$class: 'AppScanStandardBuilder', additionalCommands: '/report_file C:\\Jenkins\\workspace\\JavaVulnerable\\ /report_type Html', authScanPw: '', authScanRadio: true, authScanUser: '', includeURLS: '', installation: 'Appscan', pathRecordedLoginSequence: '', policyFile: 'C:\\Program Files (x86)\\IBM\\AppScan Standard\\Policies\\Application-Only.policy', reportName: 'javavuln.html', startingURL: 'http://dockerd:8080/JavaVulnerableLab/', verbose: true])
                     archiveArtifacts artifacts: 'javavuln.html', onlyIfSuccessful: true
                 }
             }
