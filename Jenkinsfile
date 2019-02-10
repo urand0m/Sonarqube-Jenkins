@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
 
-        ARACHNI  = ''
+        ARACHNI = ''
     }
     stages {
         stage('Checkout & Build & Sonar Analysis') {
@@ -24,7 +24,7 @@ pipeline {
             }
         }
 
-        stage ('SpotBug Static Code Analysis') {
+        stage('SpotBug Static Code Analysis') {
             steps {
 
                 sh "mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs com.github.spotbugs:spotbugs-maven-plugin:3.1.7:spotbugs"
@@ -37,21 +37,21 @@ pipeline {
             }
         }
 
-        stage('Owasp Dependency Check'){
-            steps{
-                dir('WarExtract-SCA'){
+        stage('Owasp Dependency Check') {
+            steps {
+                dir('WarExtract-SCA') {
                     unstash 'warfile'
                 }
                 //War file extracted at: $(pwd)/WarExtract-SCA/jspwiki-war/target/JSPWiki.war
                 dependencyCheckAnalyzer datadir: '', hintsFile: '', includeCsvReports: true, includeHtmlReports: true, includeJsonReports: true, includeVulnReports: true, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
                 dependencyCheckPublisher canRunOnFailed: true, defaultEncoding: '', healthy: '', pattern: '', shouldDetectModules: true, unHealthy: ''
-                archiveArtifacts artifacts: 'dependency-check-report.html',onlyIfSuccessful: true
+                archiveArtifacts artifacts: 'dependency-check-report.html', onlyIfSuccessful: true
                 //Add command to extract report from SCA scan
                 stash includes: 'dependency-check-report.html', name: 'DependencyCheckReport'
             }
         }
-        stage('Snyk.io Dependency Check without Jenkins Plugin'){
-            steps{
+        stage('Snyk.io Dependency Check without Jenkins Plugin') {
+            steps {
                 script {
                     try {
                         sh 'snyk test --json | snyk-to-html -o snyk_report.html || true'
@@ -63,7 +63,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Tomcat'){
+        stage('Deploy to Tomcat') {
             steps {
 
                 sh 'scp target/JavaVulnerableLab.war urandom@dockerd:/home/urandom/test/tomcat/'
@@ -89,7 +89,7 @@ pipeline {
         //    }
         //}
 
-        stage('Dynamic Analysis - Arachni'){
+        stage('Dynamic Analysis - Arachni') {
             steps {
                 timeout(time: 1, unit: 'HOURS') {
                     sh 'export today="$(date -d "today" +"%Y%m%d%H%M")"'
@@ -101,18 +101,16 @@ pipeline {
 
                 //    ARACHNI=sh label: 'arachni', returnStdout: true, script: 'ls scan_report_* | awk -F _ \'{print "arachni_scan_report_"$3""}\''
                 //}
-                archiveArtifacts artifacts: 'arachni_scan_*.zip',onlyIfSuccessful: true
+                archiveArtifacts artifacts: 'arachni_scan_*.zip', onlyIfSuccessful: true
             }
         }
 
-        stage('Dynamic Analysis - AppScan'){
-            node('Appscan')
-            step([$class: 'AppScanStandardBuilder', additionalCommands: '/report_file C:\\Jenkins\\javavuln.html /report_type Html', authScanPw: '', authScanRadio: true, authScanUser: '', includeURLS: '', installation: '', pathRecordedLoginSequence: '', policyFile: 'C:\\Program Files (x86)\\IBM\\AppScan Standard\\Policies\\Application-Only.policy', reportName: 'javavuln.html', startingURL: 'http://dockerd:8080', verbose: true])
-            archiveArtifacts artifacts: 'javavuln.html',onlyIfSuccessful: true
+        stage('Dynamic Analysis - AppScan') {
+            node('Appscan') {
+                step([$class: 'AppScanStandardBuilder', additionalCommands: '/report_file C:\\Jenkins\\javavuln.html /report_type Html', authScanPw: '', authScanRadio: true, authScanUser: '', includeURLS: '', installation: '', pathRecordedLoginSequence: '', policyFile: 'C:\\Program Files (x86)\\IBM\\AppScan Standard\\Policies\\Application-Only.policy', reportName: 'javavuln.html', startingURL: 'http://dockerd:8080', verbose: true])
+                archiveArtifacts artifacts: 'javavuln.html', onlyIfSuccessful: true
+            }
         }
+
     }
-
-
-
-
 }
