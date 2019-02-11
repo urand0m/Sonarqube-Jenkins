@@ -94,7 +94,7 @@ pipeline {
         //    }
         //}
 
-        stage('Dynamic Analysis - Aachni') {
+        stage('Dynamic Analysis - Arachni') {
             steps {
                 timeout(time: 1, unit: 'HOURS') {
                     sh 'export today="$(date -d "today" +"%Y%m%d%H%M")"'
