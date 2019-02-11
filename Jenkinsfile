@@ -16,7 +16,7 @@ pipeline {
             }
         }
 
-        stage("Sonar Quality Gate") {
+        stage("Sonar Qality Gate") {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: false
@@ -29,7 +29,7 @@ pipeline {
 
                 sh "mvn -batch-mode -V -U -e checkstyle:checkstyle findbugs:findbugs com.github.spotbugs:spotbugs-maven-plugin:3.1.7:spotbugs"
                 //recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-                //recordIssues enabledForFailure: true, tool: checkStyle()
+                //recordIssues enabledForaFailure: true, tool: checkStyle()
                 recordIssues enabledForFailure: true, tool: spotBugs()
                 //recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
                 //recordIssues enabledForFailure: true, tool: pmd(pattern: '**/target/pmd.xml')
