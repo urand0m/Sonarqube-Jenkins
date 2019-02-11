@@ -129,7 +129,7 @@ pipeline {
             steps{
                 node('owaspzap'){
                     script {
-                             startZap(host: "127.0.0.1", port: 8088, timeout:500, zapHome: "/usr/share/zaproxy", sessionPath:"", allowedHosts:['dockerd']) // Start ZAP at /opt/zaproxy/zap.sh, allowing scans on github.com (if allowedHosts is not provided, any local addresses will be used
+                             startZap(host: "127.0.0.1", port: 8081, timeout:500, zapHome: "/usr/share/zaproxy", sessionPath:"", allowedHosts:['dockerd']) // Start ZAP at /opt/zaproxy/zap.sh, allowing scans on github.com (if allowedHosts is not provided, any local addresses will be used
                              runZapCrawler(host: "http://dockerd:8080/JavaVulnerableLab/")
                            }
                 }
