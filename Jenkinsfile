@@ -45,7 +45,7 @@ pipeline {
                 //War file extracted at: $(pwd)/WarExtract-SCA/jspwiki-war/target/JSPWiki.war
                 dependencyCheckAnalyzer datadir: '', hintsFile: '', includeCsvReports: true, includeHtmlReports: true, includeJsonReports: true, includeVulnReports: true, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
                 dependencyCheckPublisher canRunOnFailed: true, defaultEncoding: '', healthy: '', pattern: '', shouldDetectModules: true, unHealthy: ''
-                dependencyTrackPublisher artifact: 'dependency-check-report.xml', artifactType: 'scanResult', projectId: '639cccde-564f-499b-ae14-45473d72eb30', synchronous: false
+                dependencyTrackPublisher artifact: 'dependency-check-report.xml', artifactType: 'scanResult', projectId: '639cccde-564f-499b-ae14-45473d72eb30', synchronous: true
                 archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', onlyIfSuccessful: true
                 //Add command to extract report from SCA scan
                 stash includes: 'dependency-check-report.html,dependency-check-report.xml', name: 'DependencyCheckReport'
@@ -106,9 +106,10 @@ pipeline {
 
                 //    ARACHNI=sh label: 'arachni', returnStdout: true, script: 'ls scan_report_* | awk -F _ \'{print "arachni_scan_report_"$3""}\''
                 //}
-
+                sh 'unzip arachni_scan_report_.zip -d arachni_scan'
                 archiveArtifacts artifacts: 'arachni_scan_*.zip', onlyIfSuccessful: false
                 stash includes: 'arachni_scan_*.zip', name: 'ArachniReport'
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'arachni_report', reportFiles: 'index.html', reportName: 'ArachniReport', reportTitles: 'Arachni Report'])
             }
         }
 
