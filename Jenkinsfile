@@ -110,7 +110,7 @@ pipeline {
                 sh 'unzip arachni_scan_report_.zip -d arachni_scan'
                 archiveArtifacts artifacts: 'arachni_scan_*.zip', onlyIfSuccessful: false
                 stash includes: 'arachni_scan_*.zip', name: 'ArachniReport'
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'arachni_report', reportFiles: 'index.html', reportName: 'ArachniReport', reportTitles: 'Arachni Report'])
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'arachni_scan', reportFiles: 'index.html', reportName: 'ArachniReport', reportTitles: 'Arachni Report'])
             }
         }
 
