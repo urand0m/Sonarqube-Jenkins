@@ -72,7 +72,7 @@ pipeline {
             steps {
 
                 sh 'scp target/JavaVulnerableLab.war urandom@dockerd:/home/urandom/tomcat/'
-                echo '[*] Waiting for Tomcat to explode package'
+                echo '[*] Waiting for Tomcat tteo explode package'
 
 
             }
