@@ -18,11 +18,12 @@
        <tr><td></td></tr>
     <input type="hidden" value="1" name="setup"/>
     <tr><td></td> <td><input type="submit" value="Install" name="Install"/></td></tr>
-</table>  
+</table>
+
+
 </form>
 <br/>  
 Note:<b style="color:red">If a database already exits, it will be dropped </b>
  
 
 
-  <%@ include file="/footer.jsp" %>
