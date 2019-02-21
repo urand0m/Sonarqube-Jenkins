@@ -42,8 +42,8 @@ pipeline {
         stage('Owasp Dependency Check') {
             steps {
                 //dir('WarExtract-SCA') {
-                    unstash 'javavuln'
-                }
+                //    unstash 'javavuln'
+                //}
                 //War file extracted at: $(pwd)/WarExtract-SCA/jspwiki-war/target/JSPWiki.war
                 //dependencyCheckAnalyzer datadir: '', hintsFile: '', includeCsvReports: true, includeHtmlReports: true, includeJsonReports: true, includeVulnReports: true, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
                 //dependencyCheckPublisher canRunOnFailed: true, defaultEncoding: '', healthy: '', pattern: '', shouldDetectModules: true, unHealthy: ''
