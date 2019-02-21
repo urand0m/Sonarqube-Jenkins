@@ -11,7 +11,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh 'mvn clean package -DskipTests -Dsurefire.useFile=false sonar:sonar'
                     sh 'mvn dependency:tree -DoutputType=dot --file="pom.xml"'
-                    stash includes: 'target/JavaVulnerableLab.war', name: 'warfile'
+                    stash includes: 'target/JavaVulnerableLab.war', name: 'javavuln'
                 }
             }
         }
@@ -72,15 +72,18 @@ pipeline {
         }
         stage('Deploy to Tomcat') {
             steps {
-                sh '/opt/tomcat/bin/shutdown.sh &'
-                export CATALINA_OPTS="$CATALINA_OPTS -javaagent:contrast.jar"
-                sh 'curl -X GET https://ce.contrastsecurity.com/Contrast/api/ng/af76e097-64d3-48d0-bbe6-e55bac65a367/agents/default/JAVA -H \'Authorization: Y3Jpc3RpYW5vQGdpZmZnYWZmLmNvLnVrOkk4RFJGSk1SVzY3TEE3N00=\' -H \'API-Key: COb136krXdNT30Y6KR3ijmciYgBbZ9xU\' -H \'Accept: application/json\' -OJ'
-                sh 'scp target/JavaVulnerableLab.war urandom@kalivm:/opt/tomcat/webapps/'
-                sleep(2)
-                sh '/opt/tomcat/bin/startup.sh & '
-                echo '[*] Waiting for Tomcat to explode package'
-
-
+                    node('kalivm') {
+                        dir('/opt/tomcat/webapps'){
+                            unstash 'javavuln'
+                        }
+                        dir('/opt/tomcat/') {
+                            sh 'bin/shutdown.sh &'
+                            export CATALINA_OPTS = "$CATALINA_OPTS -javaagent:contrast.jar"
+                            sh 'curl -X GET https://ce.contrastsecurity.com/Contrast/api/ng/af76e097-64d3-48d0-bbe6-e55bac65a367/agents/default/JAVA -H \'Authorization: Y3Jpc3RpYW5vQGdpZmZnYWZmLmNvLnVrOkk4RFJGSk1SVzY3TEE3N00=\' -H \'API-Key: COb136krXdNT30Y6KR3ijmciYgBbZ9xU\' -H \'Accept: application/json\' -OJ'
+                            sh '/opt/tomcat/bin/startup.sh &'
+                            echo '[*] Waiting for Tomcat to explode package'
+                        }
+                    }
             }
         }
 
