@@ -78,7 +78,7 @@ pipeline {
                         }
                         dir('/opt/tomcat/') {
                             sh 'bin/shutdown.sh &'
-                            export CATALINA_OPTS = "$CATALINA_OPTS -javaagent:contrast.jar"
+                            sh 'env | grep -i catalina'
                             sh 'curl -X GET https://ce.contrastsecurity.com/Contrast/api/ng/af76e097-64d3-48d0-bbe6-e55bac65a367/agents/default/JAVA -H \'Authorization: Y3Jpc3RpYW5vQGdpZmZnYWZmLmNvLnVrOkk4RFJGSk1SVzY3TEE3N00=\' -H \'API-Key: COb136krXdNT30Y6KR3ijmciYgBbZ9xU\' -H \'Accept: application/json\' -OJ'
                             sh '/opt/tomcat/bin/startup.sh &'
                             echo '[*] Waiting for Tomcat to explode package'
