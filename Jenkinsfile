@@ -37,11 +37,7 @@ pipeline {
             }
         }
 
-        stage('Test Contrast'){
-            steps{
-                sh 'curl -X GET https://ce.contrastsecurity.com/Contrast/api/ng/af76e097-64d3-48d0-bbe6-e55bac65a367/agents/default/JAVA -H \'Authorization: Y3Jpc3RpYW5vQGdpZmZnYWZmLmNvLnVrOkk4RFJGSk1SVzY3TEE3N00=\' -H \'API-Key: COb136krXdNT30Y6KR3ijmciYgBbZ9xU\' -H \'Accept: application/json\' -OJ'
-            }
-        }
+
 
         stage('Owasp Dependency Check') {
             steps {
@@ -76,9 +72,13 @@ pipeline {
         }
         stage('Deploy to Tomcat') {
             steps {
-
-                sh 'scp target/JavaVulnerableLab.war urandom@dockerd:/home/urandom/tomcat/'
-                echo '[*] Waiting for Tomcat tteo explode package'
+                sh '/opt/tomcat/bin/shutdown.sh &'
+                export CATALINA_OPTS="$CATALINA_OPTS -javaagent:contrast.jar"
+                sh 'curl -X GET https://ce.contrastsecurity.com/Contrast/api/ng/af76e097-64d3-48d0-bbe6-e55bac65a367/agents/default/JAVA -H \'Authorization: Y3Jpc3RpYW5vQGdpZmZnYWZmLmNvLnVrOkk4RFJGSk1SVzY3TEE3N00=\' -H \'API-Key: COb136krXdNT30Y6KR3ijmciYgBbZ9xU\' -H \'Accept: application/json\' -OJ'
+                sh 'scp target/JavaVulnerableLab.war urandom@kalivm:/opt/tomcat/webapps/'
+                sleep(2)
+                sh '/opt/tomcat/bin/startup.sh & '
+                echo '[*] Waiting for Tomcat to explode package'
 
 
             }
@@ -131,16 +131,16 @@ pipeline {
             }
         }
 
-        stage('Owasp ZAP Scan'){
-            steps{
-                node('owaspzap'){
-                    script {
-                             startZap(host: "owaspzap", port: 8081, timeout:500, zapHome: "/usr/share/zaproxy", sessionPath:"", allowedHosts:['dockerd']) // Start ZAP at /opt/zaproxy/zap.sh, allowing scans on github.com (if allowedHosts is not provided, any local addresses will be used
-                             runZapCrawler(host: "http://dockerd:8080/JavaVulnerableLab/")
-                           }
-                }
-            }
-        }
+        //stage('Owasp ZAP Scan'){
+        //    steps{
+        //        node('owaspzap'){
+        //            script {
+        //                     startZap(host: "owaspzap", port: 8081, timeout:500, zapHome: "/usr/share/zaproxy", sessionPath:"", allowedHosts:['dockerd']) // Start ZAP at /opt/zaproxy/zap.sh, allowing scans on github.com (if allowedHosts is not provided, any local addresses will be used
+        //                     runZapCrawler(host: "http://dockerd:8080/JavaVulnerableLab/")
+        //                   }
+        //        }
+        //    }
+        //}
 
     }
 }
