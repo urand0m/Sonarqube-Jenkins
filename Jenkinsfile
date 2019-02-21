@@ -37,6 +37,12 @@ pipeline {
             }
         }
 
+        stage('Test Contrast'){
+            steps{
+                sh 'curl -X GET https://ce.contrastsecurity.com/Contrast/api/ng/af76e097-64d3-48d0-bbe6-e55bac65a367/agents/default/JAVA -H \'Authorization: Y3Jpc3RpYW5vQGdpZmZnYWZmLmNvLnVrOkk4RFJGSk1SVzY3TEE3N00=\' -H \'API-Key: COb136krXdNT30Y6KR3ijmciYgBbZ9xU\' -H \'Accept: application/json\' -OJ'
+            }
+        }
+
         stage('Owasp Dependency Check') {
             steps {
                 dir('WarExtract-SCA') {
