@@ -41,12 +41,12 @@ pipeline {
 
         stage('Owasp Dependency Check') {
             steps {
-                dir('WarExtract-SCA') {
+                //dir('WarExtract-SCA') {
                     unstash 'javavuln'
                 }
                 //War file extracted at: $(pwd)/WarExtract-SCA/jspwiki-war/target/JSPWiki.war
-                dependencyCheckAnalyzer datadir: '', hintsFile: '', includeCsvReports: true, includeHtmlReports: true, includeJsonReports: true, includeVulnReports: true, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
-                dependencyCheckPublisher canRunOnFailed: true, defaultEncoding: '', healthy: '', pattern: '', shouldDetectModules: true, unHealthy: ''
+                //dependencyCheckAnalyzer datadir: '', hintsFile: '', includeCsvReports: true, includeHtmlReports: true, includeJsonReports: true, includeVulnReports: true, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
+                //dependencyCheckPublisher canRunOnFailed: true, defaultEncoding: '', healthy: '', pattern: '', shouldDetectModules: true, unHealthy: ''
                 dependencyTrackPublisher artifact: 'dependency-check-report.xml', artifactType: 'scanResult', projectId: '639cccde-564f-499b-ae14-45473d72eb30', synchronous: true
                 archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.xml', onlyIfSuccessful: true
                 //Add command to extract report from SCA scan
@@ -77,10 +77,11 @@ pipeline {
                             unstash 'javavuln'
                         }
                         dir('/opt/tomcat/') {
-                            sh 'bin/shutdown.sh &'
+                            sh 'bin/shutdown.sh'
                             sh 'env | grep -i catalina'
+                            sh 'sleep 2'
                             //sh 'curl -X GET https://ce.contrastsecurity.com/Contrast/api/ng/af76e097-64d3-48d0-bbe6-e55bac65a367/agents/default/JAVA -H \'Authorization: Y3Jpc3RpYW5vQGdpZmZnYWZmLmNvLnVrOkk4RFJGSk1SVzY3TEE3N00=\' -H \'API-Key: COb136krXdNT30Y6KR3ijmciYgBbZ9xU\' -H \'Accept: application/json\' -OJ'
-                            sh '/opt/tomcat/bin/startup.sh &'
+                            sh '/opt/tomcat/bin/startup.sh'
                             echo '[*] Waiting for Tomcat to explode package'
                         }
                     }
